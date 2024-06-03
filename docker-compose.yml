@@ -1,0 +1,53 @@
+version: '3.9'
+
+services:
+
+  accounts-app:
+    container_name: accounts-app
+    build:
+      context: ../account
+      dockerfile: Dockerfile
+      #image: rogerbu/account-app
+    environment:
+      HOST_DB: accounts
+      PORT_DB: 5432
+      USER_DB: postgres
+      USER_PASS: 123456
+    ports:
+      - "8081:8081"
+    networks:
+      - my-net
+    healthcheck:
+      test: "curl --fail --silent localhost:8080/actuator/health | grep UP || exit 1"
+      interval: 5s
+      timeout: 10s
+      retries: 10
+      start_period: 10s
+    depends_on:
+      accounts-db:
+        condition: service_healthy
+
+  accounts-db:
+    image: postgres:16
+    container_name: accounts-db
+    environment:
+      POSTGRES_DB: "accounts"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "12345"
+    ports:
+      - "5432:5432"
+    networks:
+      - my-net
+    volumes:
+      - accounts-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "sh -c 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}'" ]
+      timeout: 10s
+      retries: 10
+
+networks:
+  my-net:
+    driver: bridge
+
+volumes:
+  accounts-db-data:

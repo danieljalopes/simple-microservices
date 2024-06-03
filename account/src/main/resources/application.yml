@@ -1,0 +1,29 @@
+server:
+  port: ${SERVER_PORT:8080}
+
+spring:
+  application:
+    name: "account"
+
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://${HOST_DB:localhost}:${PORT_DB:5432}/accounts
+    username: ${USER_DB:postgres}
+    password: ${USER_PASS:12345}
+
+  jpa:
+    show-sql: false
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: false
+
+  flyway:
+    url: jdbc:postgresql://${HOST_DB:localhost}:${PORT_DB:5432}/accounts
+    user: ${USER_DB:postgres}
+    password: ${USER_PASS:12345}
+
