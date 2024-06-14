@@ -7,6 +7,10 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 
+/**
+ * The AccountMapper interface is responsible for mapping between Account and AccountDto objects.
+ * It uses MapStruct for automatic mapping implementation.
+ */
 @Mapper(
         componentModel = MappingConstants.ComponentModel.SPRING
 )

@@ -1,28 +1,30 @@
-version: '3.9'
+version: '3.8'
 
 services:
 
-  accounts-app:
-    container_name: accounts-app
+  api01:
+    #image: rogerbu/account:latest
+    hostname: api01
     build:
       context: ../account
       dockerfile: Dockerfile
-      #image: rogerbu/account-app
     environment:
-      HOST_DB: accounts
+      HOST_DB: accounts-db
       PORT_DB: 5432
       USER_DB: postgres
-      USER_PASS: 123456
+      USER_PASS: 12345
+      SERVER_PORT: 8080
+      LOGSTASH_HOST: logstash:4560
     ports:
-      - "8081:8081"
+      - "8080:8080"
     networks:
       - my-net
     healthcheck:
-      test: "curl --fail --silent localhost:8080/actuator/health | grep UP || exit 1"
-      interval: 5s
+      test: "curl --fail --silent 127.0.0.1:8080/actuator/health | grep UP || exit 1"
+      interval: 10s
       timeout: 10s
       retries: 10
-      start_period: 10s
+      start_period: 3s
     depends_on:
       accounts-db:
         condition: service_healthy
@@ -42,8 +44,10 @@ services:
       - accounts-db-data:/var/lib/postgresql/data
     healthcheck:
       test: [ "CMD-SHELL", "sh -c 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}'" ]
+      interval: 10s
       timeout: 10s
       retries: 10
+      start_period: 3s
 
 networks:
   my-net:

@@ -3,8 +3,10 @@ server:
 
 spring:
   application:
-    name: "account"
+    name: ${APP_NAME:"account"}
 
+  elasticsearch:
+    uris: http://localhost:9200
 
   datasource:
     driver-class-name: org.postgresql.Driver
@@ -27,3 +29,22 @@ spring:
     user: ${USER_DB:postgres}
     password: ${USER_PASS:12345}
 
+
+management:
+  endpoint:
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+logstash:
+  host: ${LOGSTASH_HOST:localhost:4560}

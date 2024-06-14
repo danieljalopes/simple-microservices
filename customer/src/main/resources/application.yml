@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: customer
+
+server:
+  port: ${SERVER_PORT:8181}
+
+account:
+  api:
+    url: http://localhost:9999/api/v1/accounts/1/transactions
+
+logstash:
+  host: "localhost:4560"

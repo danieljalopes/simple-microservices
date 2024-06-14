@@ -24,3 +24,5 @@ logging:
       hibernate:
         type: trace
 
+logstash:
+  host: localhost

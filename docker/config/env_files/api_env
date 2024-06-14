@@ -1,0 +1,6 @@
+HOST_DB: accounts-db
+PORT_DB: 5432
+USER_DB: postgres
+USER_PASS: 12345
+SERVER_PORT: 8080
+LOGSTASH_HOST: logstash:4560

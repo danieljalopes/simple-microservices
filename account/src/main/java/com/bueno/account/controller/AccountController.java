@@ -20,7 +20,7 @@ public class AccountController {
     private final AccountService accountService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<AccountDto> getTransactionById(@NotNull @PathVariable Long id) {
+    public ResponseEntity<AccountDto> getAccountById(@NotNull @PathVariable Long id) {
         return ResponseEntity.ok(accountService.getAccountById(id));
     }
 

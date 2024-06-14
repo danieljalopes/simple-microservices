@@ -62,6 +62,16 @@ public class TransactionService {
         return performTransaction(account, dto);
     }
 
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+    public TransactionDto addNewTransactionInPessimisticWrite(Long accountId, TransactionRequestDto dto) {
+
+        Account account = getAccountPessimisticWay(accountId);
+
+        validateTransaction(account, dto);
+
+        return performTransaction(account, dto);
+    }
+
     private TransactionDto performTransaction(Account account, TransactionRequestDto dto) {
 
         if (TransactionType.D.equals(dto.type())) {
@@ -85,6 +95,11 @@ public class TransactionService {
 
     private Account getAccount(Long accountId) {
         return accountRepository.findById(accountId)
+                                .orElseThrow(() -> new NotFoundException("Account not found with id: " + accountId));
+    }
+
+    private Account getAccountPessimisticWay(Long accountId) {
+        return accountRepository.findByIdPessimisticWrite(accountId)
                                 .orElseThrow(() -> new NotFoundException("Account not found with id: " + accountId));
     }
 

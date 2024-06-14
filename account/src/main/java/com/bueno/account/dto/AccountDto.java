@@ -1,7 +1,7 @@
 package com.bueno.account.dto;
 
 public record AccountDto(
-        String id,
+        Long id,
         String name,
         Long limite,
         Long saldo) {

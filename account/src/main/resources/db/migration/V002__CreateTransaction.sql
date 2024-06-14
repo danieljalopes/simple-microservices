@@ -7,7 +7,7 @@ create table transactions
     created_at  timestamp(6) not null,
     value       bigint       not null,
     account_id  bigint       not null,
-    description varchar(40)  not null,
+    description varchar(200) not null,
     primary key (id)
 );
 

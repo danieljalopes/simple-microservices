@@ -24,7 +24,7 @@ public class Transaction {
     @Column(name = "type", length = 2, nullable = false)
     @Enumerated(EnumType.STRING)
     private TransactionType type;
-    @Column(name = "description", length = 40, nullable = false)
+    @Column(name = "description", length = 200, nullable = false)
     private String description;
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
