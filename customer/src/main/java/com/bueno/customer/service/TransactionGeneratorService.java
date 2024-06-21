@@ -11,8 +11,8 @@ public class TransactionGeneratorService {
 
     public static final String DEBIT_OPERATION = "D";
     public static final String CREDIT_OPERATION = "C";
-    public static final String CREDIT_DESCRIPTION = "Receipt of work hours in %s.";
-    public static final String DEBIT_DESCRIPTION = "Payment for beer %s, cheers!";
+    public static final String CREDIT_DESCRIPTION = "Recebimento por entrega de software em %s.";
+    public static final String DEBIT_DESCRIPTION = "Pagamento pela cerveja %s, saúde!";
     private final Faker faker;
 
     public TransactionGeneratorService() {

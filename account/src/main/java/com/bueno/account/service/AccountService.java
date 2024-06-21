@@ -13,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class AccountService {
 
+    private static final String NOT_FOUND_MSG = "Account not found with id: ";
+
     private final AccountRepository accountRepository;
     private final AccountMapper accountMapper;
 
@@ -20,8 +22,7 @@ public class AccountService {
     public AccountDto getAccountById(Long id) {
         return accountMapper.toDto(
                 accountRepository.findById(id)
-                                 .orElseThrow(() -> new NotFoundException("Account not found with id: " + id))
+                                 .orElseThrow(() -> new NotFoundException(NOT_FOUND_MSG + id))
         );
     }
-
 }

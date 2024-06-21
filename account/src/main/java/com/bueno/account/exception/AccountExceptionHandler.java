@@ -3,6 +3,7 @@ package com.bueno.account.exception;
 import com.bueno.account.dto.ResponseExceptionDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -32,7 +33,7 @@ public class AccountExceptionHandler {
         return new ResponseEntity<>(responseExceptionDTO, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(ResourceUnprocessableException.class)
+    @ExceptionHandler({ResourceUnprocessableException.class, ObjectOptimisticLockingFailureException.class})
     public ResponseEntity<ResponseExceptionDTO> handleResourceUnprocessableException(Throwable e, WebRequest request) {
         ResponseExceptionDTO responseExceptionDTO =
                 new ResponseExceptionDTO(

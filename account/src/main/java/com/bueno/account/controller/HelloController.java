@@ -1,6 +1,5 @@
 package com.bueno.account.controller;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -13,16 +12,15 @@ import java.net.UnknownHostException;
 import java.util.Collections;
 
 @RestController
-@AllArgsConstructor
 @Slf4j
 @RequestMapping("/api/v1/hello")
 public class HelloController {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> fetchHello() throws UnknownHostException {
+    public ResponseEntity<?> getGreetingFromHost() throws UnknownHostException {
         String hostname = InetAddress.getLocalHost().getHostName();
-        log.info("Hello from {}", hostname);
-        return ResponseEntity.ok(Collections.singletonMap("message", "Hello from " + hostname));
+        String greetingMessage = "Hello from " + hostname;
+        log.info(greetingMessage);
+        return ResponseEntity.ok(Collections.singletonMap("message", greetingMessage));
     }
-
 }

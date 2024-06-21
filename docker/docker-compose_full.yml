@@ -8,10 +8,14 @@ services:
     build:
       context: ../account
       dockerfile: Dockerfile
-    env_file:
-      - ./config/env_files/api_env
     environment:
-      APP_NAME: "ACCOUNT"
+      HOST_DB: accounts-db
+      PORT_DB: 5432
+      USER_DB: postgres
+      USER_PASS: 12345
+      SERVER_PORT: 8080
+      LOGSTASH_HOST: logstash:4560
+      APP_NAME: ACCOUNT
     ports:
       - "8080:8080"
     networks:
@@ -62,7 +66,7 @@ services:
       start_period: 3s
 
   accounts-db:
-    image: postgres:16
+    image: postgres:alpine
     container_name: accounts-db
     environment:
       POSTGRES_DB: "accounts"

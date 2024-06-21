@@ -42,8 +42,8 @@ public class TransactionController {
     @PostMapping(value = "/{id}/transactions", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addNewTransaction(@NotNull @PathVariable("id") Long accountId,
                                                @Valid @RequestBody TransactionRequestDto dto) {
-        TransactionDto transactionDto = transactionService.addNewTransactionInPessimisticWrite(accountId, dto);
-//        TransactionDto transactionDto = transactionService.addNewTransaction(accountId, dto);
+//        TransactionDto transactionDto = transactionService.addNewTransactionInPessimisticWrite(accountId, dto);
+        TransactionDto transactionDto = transactionService.addNewTransaction(accountId, dto);
         HttpHeaders headers = new HttpHeaders();
         headers.add("hostname", localhost);
         log.info("Host {} - Transaction created: {} ", localhost, transactionDto);

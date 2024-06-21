@@ -12,6 +12,7 @@ import com.bueno.account.mapper.TransactionMapper;
 import com.bueno.account.repository.AccountRepository;
 import com.bueno.account.repository.TransactionRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -21,6 +22,7 @@ import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @Transactional
+@Slf4j
 @Service
 public class TransactionService {
 
@@ -39,7 +41,6 @@ public class TransactionService {
     @Transactional(readOnly = true)
     public ExtratoResponseDto fetchExtratoByAccountId(Long accountId) {
         Account account = getAccount(accountId);
-
         return ExtratoResponseDto.builder()
                                  .balance(account.getSaldo())
                                  .balanceDate(LocalDateTime.now())
@@ -54,42 +55,33 @@ public class TransactionService {
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public TransactionDto addNewTransaction(Long accountId, TransactionRequestDto dto) {
-
         Account account = getAccount(accountId);
-
         validateTransaction(account, dto);
-
         return performTransaction(account, dto);
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public TransactionDto addNewTransactionInPessimisticWrite(Long accountId, TransactionRequestDto dto) {
-
         Account account = getAccountPessimisticWay(accountId);
-
         validateTransaction(account, dto);
-
         return performTransaction(account, dto);
     }
 
     private TransactionDto performTransaction(Account account, TransactionRequestDto dto) {
-
         if (TransactionType.D.equals(dto.type())) {
             account.setSaldo(account.getSaldo() - dto.value());
         } else {
             account.setSaldo(account.getSaldo() + dto.value());
         }
-
         Transaction newTransaction = Transaction.builder()
                                                 .account(account)
                                                 .description(dto.description())
                                                 .type(dto.type())
                                                 .value(dto.value())
                                                 .build();
-
+        Transaction saved = null;
         accountRepository.save(account);
-        Transaction saved = transactionRepository.save(newTransaction);
-
+        saved = transactionRepository.save(newTransaction);
         return transactionMapper.toDto(saved);
     }
 
