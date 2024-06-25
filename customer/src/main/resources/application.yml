@@ -7,8 +7,8 @@ server:
 
 account:
   api:
-    url: http://localhost:9999/api/v1/accounts/1/transactions
+    url: http://${API_HOST:localhost}:${API_PORT:9999}/api/v1/accounts/1/transactions
 
 logstash:
-  host: "localhost:4560"
+  host: "${LOGSTASH_HOST:localhost:4560}"
  
