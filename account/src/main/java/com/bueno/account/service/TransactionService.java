@@ -33,8 +33,8 @@ public class TransactionService {
     @Transactional(readOnly = true)
     public TransactionDto getTransactionByIdAndAccount(Long transactionId, Long accountId) {
         return transactionMapper.toDto(transactionRepository.findTransactionByIdAndAccount_Id(transactionId, accountId)
-                                                            .orElseThrow(() -> new NotFoundException(
-                                                                    "Transaction not found with id: " + transactionId))
+                .orElseThrow(() -> new NotFoundException(
+                        "Transaction not found with id: " + transactionId))
         );
     }
 
@@ -42,15 +42,15 @@ public class TransactionService {
     public ExtratoResponseDto fetchExtratoByAccountId(Long accountId) {
         Account account = getAccount(accountId);
         return ExtratoResponseDto.builder()
-                                 .balance(account.getSaldo())
-                                 .balanceDate(LocalDateTime.now())
-                                 .limit(account.getLimite())
-                                 .lastTransactions(
-                                         transactionRepository.findLastTenTransactionsOrderByDateDesc(accountId)
-                                                              .stream()
-                                                              .map(transactionMapper::toExtratoItemDto)
-                                                              .toList())
-                                 .build();
+                .balance(account.getSaldo())
+                .balanceDate(LocalDateTime.now())
+                .limit(account.getLimite())
+                .lastTransactions(
+                        transactionRepository.findLastTenTransactionsOrderByDateDesc(accountId)
+                                .stream()
+                                .map(transactionMapper::toExtratoItemDto)
+                                .toList())
+                .build();
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
@@ -74,11 +74,11 @@ public class TransactionService {
             account.setSaldo(account.getSaldo() + dto.value());
         }
         Transaction newTransaction = Transaction.builder()
-                                                .account(account)
-                                                .description(dto.description())
-                                                .type(dto.type())
-                                                .value(dto.value())
-                                                .build();
+                .account(account)
+                .description(dto.description())
+                .type(dto.type())
+                .value(dto.value())
+                .build();
         Transaction saved = null;
         accountRepository.save(account);
         saved = transactionRepository.save(newTransaction);
@@ -87,18 +87,19 @@ public class TransactionService {
 
     private Account getAccount(Long accountId) {
         return accountRepository.findById(accountId)
-                                .orElseThrow(() -> new NotFoundException("Account not found with id: " + accountId));
+                .orElseThrow(() -> new NotFoundException("Account not found with id: " + accountId));
     }
 
     private Account getAccountPessimisticWay(Long accountId) {
         return accountRepository.findByIdPessimisticWrite(accountId)
-                                .orElseThrow(() -> new NotFoundException("Account not found with id: " + accountId));
+                .orElseThrow(() -> new NotFoundException("Account not found with id: " + accountId));
     }
 
     private void validateTransaction(Account account, TransactionRequestDto dto) {
         if (TransactionType.D.equals(dto.type()) && account.getSaldo() + account.getLimite() < dto.value()) {
             throw new ResourceUnprocessableException(
-                    "Account does not have enough balance to perform this transaction");
+                    String.format("A conta(%d) não possui saldo(%d) suficiente para realizar essa transação",
+                            account.getId(), account.getSaldo()));
         }
     }
 
