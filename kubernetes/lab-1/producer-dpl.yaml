@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: producer-dpl
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: producer
+  template:
+    metadata:
+      labels:
+        app: producer
+    spec:
+      containers:
+        - name: producer-app
+          image: docker.io/rogerbu/customer:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+           - containerPort: 8081
+             name: rest-interface
+          env:
+            - name: SERVER_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: producer-cm
+                  key: server.port
+            - name: API_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: producer-cm
+                  key: api.host
+            - name: API_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: producer-cm
+                  key: api.port                                               
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "512Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi" 
+          readinessProbe:
+            tcpSocket:
+              port: 8081
+            initialDelaySeconds: 180
+            periodSeconds: 20
+            timeoutSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 8081
+            initialDelaySeconds: 200
+            periodSeconds: 20
+            timeoutSeconds: 10 
+          volumeMounts:
+            - name: data-cluster 
+              mountPath: /my_data #folder on pod
+                
+      volumes:
+      - name: data-cluster
+        hostPath: # folder on K8s cluster
+          path: /data/producer # this has no use, just for demonstration purposes
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: producer-cm
+  namespace: default
+data:
+  server.port: "8081"
+  api.host: "consumer-svc.default.svc.cluster.local"
+  api.port: "8080"

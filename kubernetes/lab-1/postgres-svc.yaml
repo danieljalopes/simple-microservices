@@ -1,0 +1,35 @@
+# to expose postgres inside cluster
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-svc
+  namespace: default
+  labels:
+    service: postgres
+spec:
+  type: ClusterIP
+  selector:
+    # match the .spec.template.metadata.labels
+    app: postgres
+  ports:
+  - port: 5432  #port this service listens
+    targetPort: 5432 # the service redirects trafic to containerPort
+    name: client
+
+---
+ #to expose Database to outside cluster
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-np
+  namespace: default
+spec:
+  type: NodePort
+  selector:
+    # match the .spec.template.metadata.labels on de StatefulSet
+    app: postgres
+  ports:
+  - port: 5433  #port this service listens
+    targetPort: 5432 # the service redirects traffic to containerPort
+    nodePort: 30032 #the port reserved in the cluster for outside communication
+    name: client

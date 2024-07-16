@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: consumer-dpl
+  namespace: default
+  annotations:
+    profile: consumer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: customer
+  template:
+    metadata:
+      labels:
+        app: customer
+    spec:
+      containers:
+        - name: consumer-app
+          image: docker.io/rogerbu/account:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+           - containerPort: 8080
+             name: rest-interface
+           - containerPort: 8081
+             name: actuator
+          env:
+            - name: HOST_DB
+              value: postgres-svc.default.svc.cluster.local
+            - name: PORT_DB
+              value: "5432"
+            - name: SERVER_PORT
+              value: "8080"
+            - name: APP_NAME
+              value: ACCOUNT
+          resources:
+            requests:
+              cpu: "0.5"
+              memory: "512Mi"
+            limits:
+              cpu: "0.5"
+              memory: "512Mi" 
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 180
+            periodSeconds: 20
+            timeoutSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 200
+            periodSeconds: 20
+            timeoutSeconds: 10 
+          volumeMounts:
+            - name: data-cluster 
+              mountPath: /my_data #folder on pod
+                
+      volumes:
+      - name: data-cluster
+        hostPath: #folder on K8s cluster
+          path: /data/consumer # this has no use, just for demonstration purposes

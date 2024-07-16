@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres
+  namespace: default
+spec:
+   serviceName: "postgres"
+   replicas: 1
+   selector:
+      matchLabels:
+         app: postgres
+   template:
+      metadata:
+         labels:
+            app: postgres
+      spec:
+          containers:
+            - name: postgres-db
+              image: postgres:alpine3.20
+              imagePullPolicy: "IfNotPresent"
+              env:
+                - name: POSTGRES_DB
+                  value: "accounts"
+                - name: POSTGRES_USER
+                  value: "postgres"
+                - name: POSTGRES_PASSWORD
+                  value: "12345"
+              ports:
+                  - containerPort: 5432
+                    name: client
+              volumeMounts:
+                  - name: accounts-db-data
+                    mountPath: /var/lib/postgresql/data 
+         
+   volumeClaimTemplates:
+      - metadata:
+          name: accounts-db-data
+          namespace: default
+        spec:
+          storageClassName: ""
+          volumeName: postgres-pv
+          accessModes:
+           - ReadWriteOnce
+          resources:
+            requests:
+              storage: 200Mi
+
+
+
+
+
+

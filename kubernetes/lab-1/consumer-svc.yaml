@@ -1,0 +1,15 @@
+# to expose consumer inside cluster
+apiVersion: v1
+kind: Service
+metadata:
+  name: consumer-svc
+  namespace: default
+spec:
+  type: ClusterIP
+  selector:
+    # match the .spec.template.metadata.labels
+    app: customer
+  ports:
+  - port: 8080  #port this service listens
+    targetPort: 8080 # the service redirects trafic to containerPort
+    name: client

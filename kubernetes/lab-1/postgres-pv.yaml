@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgres-pv
+spec:
+  claimRef: #pre-reserve for a specific pvc: <pvc name>-<pod name>
+    name: accounts-db-data-postgres-0
+    namespace: default
+  capacity:
+    storage: 200Mi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/data/postgres"
+    
